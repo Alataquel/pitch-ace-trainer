@@ -4,11 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Mic, MicOff, RotateCcw, Play, Pause, Volume2, ArrowRight, Eye, MessageSquare, Users, Clock } from "lucide-react";
+import { Mic, MicOff, RotateCcw, Play, Pause, Volume2, ArrowRight, MessageSquare, Users, Clock, TrendingUp, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PerformanceSidebar } from "./PerformanceSidebar";
 import { AudioPlayer } from "./AudioPlayer";
-import { ImprovementSuggestions } from "./ImprovementSuggestions";
 
 type PitchState = 'idle' | 'recording' | 'processing' | 'results';
 
@@ -16,14 +15,13 @@ interface ScoreResult {
   clarity: number;
   structure: number;
   confidence: number;
-  eyeContact: number;
-  facialExpression: number;
-  handGestures: number;
-  bodyPosture: number;
   vocalFeatures: number;
+  appropriatePauses: number;
   speechFluency: number;
+  speechModulation: number;
   wordUsage: number;
   sentenceAnalysis: number;
+  skills: number;
 }
 
 interface DetailedFeedback {
@@ -45,28 +43,36 @@ const PitchAnalysisDashboard = () => {
 
   const detailedFeedback: DetailedFeedback[] = [
     {
-      category: 'Non Verbal',
-      subcategory: 'Eye Contact',
-      score: 66,
-      status: 'needs-work',
-      feedback: 'You could do a better job of maintaining eye contact with the interviewer.',
-      improvement: 'Maintain eye contact for at least 75% of the duration'
-    },
-    {
-      category: 'Non Verbal',
-      subcategory: 'Facial Expressions',
-      score: 75,
-      status: 'good',
-      feedback: 'Your facial expressions are generally appropriate and engaging.',
-      improvement: 'Keep up your smile while speaking, to appear more confident'
-    },
-    {
       category: 'Delivery of Speech',
       subcategory: 'Vocal Features',
       score: 82,
-      status: 'excellent',
-      feedback: 'Excellent vocal delivery with good modulation and clarity.',
+      status: 'good',
+      feedback: 'Good vocal delivery with appropriate tone and pitch variation.',
       improvement: 'Continue maintaining your natural pitch and tone'
+    },
+    {
+      category: 'Delivery of Speech',
+      subcategory: 'Appropriate Pauses',
+      score: 88,
+      status: 'excellent',
+      feedback: 'Excellent use of pauses to emphasize key points and allow for comprehension.',
+      improvement: 'Maintain this natural rhythm in your speech'
+    },
+    {
+      category: 'Delivery of Speech',
+      subcategory: 'Speech Fluency',
+      score: 85,
+      status: 'excellent',
+      feedback: 'Smooth and fluent delivery with minimal hesitations.',
+      improvement: 'Continue practicing to maintain this fluency level'
+    },
+    {
+      category: 'Delivery of Speech',
+      subcategory: 'Speech Modulation',
+      score: 79,
+      status: 'good',
+      feedback: 'Good modulation with some variation in pace and emphasis.',
+      improvement: 'Add more dynamic range to keep the audience engaged'
     },
     {
       category: 'Content Strength',
@@ -75,6 +81,22 @@ const PitchAnalysisDashboard = () => {
       status: 'good',
       feedback: 'Good vocabulary usage with professional terminology.',
       improvement: 'Incorporate more specific industry keywords'
+    },
+    {
+      category: 'Content Strength',
+      subcategory: 'Sentence Analysis',
+      score: 68,
+      status: 'needs-work',
+      feedback: 'Sentence structure could be improved for better clarity and impact.',
+      improvement: 'Use more varied sentence structures and stronger action words'
+    },
+    {
+      category: 'Content Strength',
+      subcategory: 'Skills',
+      score: 65,
+      status: 'needs-work',
+      feedback: 'Skills and achievements could be presented more effectively.',
+      improvement: 'Quantify your achievements and be more specific about your skills'
     }
   ];
 
@@ -100,14 +122,13 @@ const PitchAnalysisDashboard = () => {
           clarity: 85,
           structure: 78,
           confidence: 82,
-          eyeContact: 66,
-          facialExpression: 75,
-          handGestures: 80,
-          bodyPosture: 88,
           vocalFeatures: 82,
+          appropriatePauses: 88,
           speechFluency: 85,
+          speechModulation: 79,
           wordUsage: 71,
-          sentenceAnalysis: 73
+          sentenceAnalysis: 68,
+          skills: 65
         });
         setState('results');
       }, 2000);
@@ -200,13 +221,13 @@ const PitchAnalysisDashboard = () => {
               <Card className="text-center hover:shadow-card transition-all duration-300">
                 <CardHeader>
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-primary flex items-center justify-center">
-                    <Eye className="w-6 h-6 text-white" />
+                    <Volume2 className="w-6 h-6 text-white" />
                   </div>
-                  <CardTitle>Comprehensive Analysis</CardTitle>
+                  <CardTitle>Speech Analysis</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription>
-                    Detailed feedback on non-verbal communication, speech delivery, and content strength
+                    Detailed feedback on speech delivery, vocal features, and content strength
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -336,10 +357,11 @@ const PitchAnalysisDashboard = () => {
         {/* Main Content Area */}
         <div className="flex-1 p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="summary">Summary</TabsTrigger>
               <TabsTrigger value="detailed-feedback">Detailed Feedback</TabsTrigger>
               <TabsTrigger value="transcript">Transcript</TabsTrigger>
+              <TabsTrigger value="improvements">Improvements</TabsTrigger>
             </TabsList>
 
             <TabsContent value="summary" className="mt-6">
@@ -354,29 +376,22 @@ const PitchAnalysisDashboard = () => {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid md:grid-cols-3 gap-6">
-                        <div className="text-center p-4 border rounded-lg">
-                          <h3 className="font-semibold mb-2">Non Verbal</h3>
-                          <Badge className="mb-2 bg-orange-100 text-orange-600">On Track</Badge>
-                          <p className="text-sm text-muted-foreground">
-                            Focuses on your body language and provides insights to create a better visual impact on the recruiters.
-                          </p>
-                        </div>
-                        <div className="text-center p-4 border rounded-lg">
-                          <h3 className="font-semibold mb-2">Delivery of Speech</h3>
-                          <Badge className="mb-2 bg-orange-100 text-orange-600">On Track</Badge>
-                          <p className="text-sm text-muted-foreground">
-                            Analyzes speech on certain audio parameters & provides feedback symbolizing confidence in interview speech.
-                          </p>
-                        </div>
-                        <div className="text-center p-4 border rounded-lg">
-                          <h3 className="font-semibold mb-2">Content Strength</h3>
-                          <Badge className="mb-2 bg-red-100 text-red-600">Needs Work</Badge>
-                          <p className="text-sm text-muted-foreground">
-                            Evaluates the content to check the structure and presence of necessary elements in the interview response.
-                          </p>
-                        </div>
-                      </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="text-center p-4 border rounded-lg">
+                    <h3 className="font-semibold mb-2">Delivery of Speech</h3>
+                    <Badge className="mb-2 bg-orange-100 text-orange-600">On Track</Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Analyzes speech on certain audio parameters & provides feedback symbolizing confidence in interview speech.
+                    </p>
+                  </div>
+                  <div className="text-center p-4 border rounded-lg">
+                    <h3 className="font-semibold mb-2">Content Strength</h3>
+                    <Badge className="mb-2 bg-red-100 text-red-600">Needs Work</Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Evaluates the content to check the structure and presence of necessary elements in the interview response.
+                    </p>
+                  </div>
+                </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -394,26 +409,26 @@ const PitchAnalysisDashboard = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Eye className="w-5 h-5" />
-                        Eye Contact
+                        <Volume2 className="w-5 h-5" />
+                        Vocal Features
                         <Badge className="bg-orange-100 text-orange-600">On Track</Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground mb-4">
-                        You could do a better job of maintaining eye contact with the interviewer.
+                        Good vocal delivery with appropriate tone and pitch variation.
                       </p>
                       
                       <div className="mb-6">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Eye Contact Duration</span>
-                          <span className="text-2xl font-bold text-orange-500">66%</span>
+                          <span className="text-sm font-medium">Vocal Quality Score</span>
+                          <span className="text-2xl font-bold text-orange-500">82%</span>
                         </div>
                         <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                          <span>Min. Required</span>
-                          <span>75%</span>
+                          <span>Target Score</span>
+                          <span>85%</span>
                         </div>
-                        <Progress value={66} max={100} className="h-2" />
+                        <Progress value={82} max={100} className="h-2" />
                       </div>
 
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -425,7 +440,7 @@ const PitchAnalysisDashboard = () => {
                       <div className="mt-6">
                         <Button variant="outline" className="w-full gap-2">
                           <ArrowRight className="w-4 h-4" />
-                          Next steps for improving Eye Contact
+                          Next steps for improving Vocal Features
                         </Button>
                       </div>
                     </CardContent>
@@ -451,11 +466,104 @@ const PitchAnalysisDashboard = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            <TabsContent value="improvements" className="mt-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">How to improve ?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Get personalized feedback and recommendations on your pitch performance.
+                    </p>
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                      View Detailed Feedback
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5" />
+                      Overall Improvements
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mt-0.5 flex-shrink-0">
+                          <Clock className="w-4 h-4" />
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Give adequate amount of time to answer the question
+                        </p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mt-0.5 flex-shrink-0">
+                          <MessageSquare className="w-4 h-4" />
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Incorporate key elements in your response
+                        </p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mt-0.5 flex-shrink-0">
+                          <CheckCircle className="w-4 h-4" />
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Showcase your skills relevant to the question
+                        </p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mt-0.5 flex-shrink-0">
+                          <Volume2 className="w-4 h-4" />
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Speak slowly and clearly, maintaining your natural pitch, and make sure you are easily audible
+                        </p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mt-0.5 flex-shrink-0">
+                          <Volume2 className="w-4 h-4" />
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Modulate your speech for effective communication
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card className="mt-6">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      <span className="text-sm font-medium">Good Job</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                      <span className="text-sm font-medium">On Track</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                      <span className="text-sm font-medium">Needs Work</span>
+                    </div>
+                  </div>
+                  <div className="text-center mt-4">
+                    <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                      <TrendingUp className="w-3 h-3" />
+                      High Impact steps to improve your level score
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
           </Tabs>
         </div>
-
-        {/* Right Sidebar */}
-        <ImprovementSuggestions />
       </div>
     </div>
   );

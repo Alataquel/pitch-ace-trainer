@@ -1,19 +1,18 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Eye, Smile, Hand, User, Volume2, Mic, Zap, MessageSquare, FileText, Cog } from "lucide-react";
+import { Volume2, Mic, Zap, MessageSquare, FileText, Cog, Pause, Settings } from "lucide-react";
 
 interface ScoreResult {
   clarity: number;
   structure: number;
   confidence: number;
-  eyeContact: number;
-  facialExpression: number;
-  handGestures: number;
-  bodyPosture: number;
   vocalFeatures: number;
+  appropriatePauses: number;
   speechFluency: number;
+  speechModulation: number;
   wordUsage: number;
   sentenceAnalysis: number;
+  skills: number;
 }
 
 interface DetailedFeedback {
@@ -42,25 +41,18 @@ export function PerformanceSidebar({ scores, detailedFeedback }: PerformanceSide
 
   const getIcon = (subcategory: string) => {
     switch (subcategory.toLowerCase()) {
-      case 'eye contact': return <Eye className="w-5 h-5" />;
-      case 'facial expressions': return <Smile className="w-5 h-5" />;
-      case 'hand gestures': return <Hand className="w-5 h-5" />;
-      case 'body posture': return <User className="w-5 h-5" />;
       case 'vocal features': return <Volume2 className="w-5 h-5" />;
+      case 'appropriate pauses': return <Pause className="w-5 h-5" />;
       case 'speech fluency': return <Mic className="w-5 h-5" />;
+      case 'speech modulation': return <Settings className="w-5 h-5" />;
       case 'word usage': return <MessageSquare className="w-5 h-5" />;
       case 'sentence analysis': return <FileText className="w-5 h-5" />;
+      case 'skills': return <Zap className="w-5 h-5" />;
       default: return <Cog className="w-5 h-5" />;
     }
   };
 
   const categoryItems = [
-    {
-      category: 'Non Verbal',
-      color: 'bg-orange-100 text-orange-600',
-      status: 'On Track',
-      items: detailedFeedback.filter(item => item.category === 'Non Verbal')
-    },
     {
       category: 'Delivery of Speech',
       color: 'bg-orange-100 text-orange-600',
