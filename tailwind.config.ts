@@ -57,11 +57,28 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Custom colors for Elevator Pitch Trainer
+        "primary-blue": "hsl(var(--primary-blue))",
+        "accent-blue": "hsl(var(--accent-blue))",
+        "light-gray": "hsl(var(--light-gray))",
+        "light-blue": "hsl(var(--light-blue))",
+        "description-gray": "hsl(var(--description-gray))",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-hero": "var(--gradient-hero)",
+      },
+      boxShadow: {
+        "soft": "var(--shadow-soft)",
+        "card": "var(--shadow-card)",
+      },
+      transitionTimingFunction: {
+        "smooth": "var(--transition-smooth)",
       },
       keyframes: {
         "accordion-down": {
