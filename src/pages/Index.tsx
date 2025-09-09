@@ -1,7 +1,7 @@
-import ElevatorPitchTrainer from "@/components/ElevatorPitchTrainer";
+import PitchAnalysisDashboard from "@/components/PitchAnalysisDashboard";
 
 const Index = () => {
-  return <ElevatorPitchTrainer />;
+  return <PitchAnalysisDashboard />;
 };
 
 export default Index;
